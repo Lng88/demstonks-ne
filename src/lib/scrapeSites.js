@@ -9,7 +9,7 @@ const {
   WebhookClientRobot,
 } = require('./webhooks/index');
 const {
-  STORES: { bestbuy, newegg },
+  STORES: { newegg },
   SERVER_ID,
   THIRTY_EIGHTY_ROLE,
   THIRTY_NINETY_ROLE,
