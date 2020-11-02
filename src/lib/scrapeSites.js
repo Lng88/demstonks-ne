@@ -31,17 +31,24 @@ const scrape = async (store, url, storeButton, gpu, membersObj) => {
     const page = await browser.newPage();
     // Configure the navigation timeout
     await page.setDefaultNavigationTimeout(0);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
 
     await page
-      .waitForSelector(storeButton)
+      .waitForSelector(storeButton, { timeout: 10000 })
       .then(() => console.log('Found Selector'))
-      .catch(() => (message = ''));
+      .catch(() => {
+        message = 'Not Found';
+      });
+
+    if (message === 'Not Found') {
+      console.log(`Selector ${message} @ ${url}`);
+      return;
+    }
 
     if (message === '') {
       dataObj['showTitle'] = await page.title();
       dataObj['available'] = await page.evaluate((storeButton) => {
-        return document.querySelector(storeButton).innerHTML;
+        return document.querySelector(storeButton).innerText;
       }, storeButton);
       let time = new Date();
       console.log(`running, ${time.getHours()}:${time.getMinutes()}`);
@@ -51,10 +58,7 @@ const scrape = async (store, url, storeButton, gpu, membersObj) => {
       message = dataObj['available'].toLowerCase();
     }
 
-    if (
-      message.toLowerCase() !== 'coming soon' &&
-      message.toLowerCase() !== 'sold out'
-    ) {
+    if (message.includes('in stock')) {
       message = url;
       const embed = await new Discord.MessageEmbed()
         .setTitle(`NVIDIA GeForce RTX ${gpu}`)
@@ -113,14 +117,15 @@ const scrapeSites = async () => {
   const members = await getSubscribedMembers(guild);
 
   if (members) {
-    for (let url of bestbuy['3070']) {
-      await scrape('bestbuy', url, bestbuy.button, '3070', members);
+    for (let url of newegg['3070']) {
+      await scrape('newegg', url, newegg.button, '3070', members);
     }
-    for (let url of bestbuy['3080']) {
-      await scrape('bestbuy', url, bestbuy.button, '3080', members);
+    for (let url of newegg['3080']) {
+      await scrape('newegg', url, newegg.button, '3080', members);
     }
-    for (let url of bestbuy['3090']) {
-      await scrape('bestbuy', url, bestbuy.button, '3090', members);
+    for (let url of newegg['3090']) {
+      console.log('scraping 3090');
+      await scrape('newegg', url, newegg.button, '3090', members);
     }
   }
 };
