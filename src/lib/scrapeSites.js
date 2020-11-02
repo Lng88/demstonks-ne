@@ -115,6 +115,7 @@ const scrapeSites = async () => {
   const guild = await WebhookClientReactionListener.guilds.cache.get(SERVER_ID);
 
   const members = await getSubscribedMembers(guild);
+  console.log('Subscribed Members: ', members);
 
   if (members) {
     for (let url of newegg['3070']) {
