@@ -88,25 +88,34 @@ const scrape = async (store, url, storeButton, gpu, membersObj) => {
 };
 
 const getSubscribedMembers = async (guild) => {
-  const obj = {};
-  let thirtySeventy, thirtyEighty, thirtyNinety;
-
   if (guild && guild.roles) {
-    thirtySeventy = Array.from(
-      await guild.roles.cache.get(THIRTY_SEVENTY_ROLE).members.keys()
-    );
-    thirtyEighty = Array.from(
-      await guild.roles.cache.get(THIRTY_EIGHTY_ROLE).members.keys()
-    );
-    thirtyNinety = Array.from(
-      await guild.roles.cache.get(THIRTY_NINETY_ROLE).members.keys()
-    );
+    let memberIds = {};
+    let thirtySeventy = [];
+    let thirtyEighty = [];
+    let thirtyNinety = [];
 
-    obj['3070'] = thirtySeventy;
-    obj['3080'] = thirtyEighty;
-    obj['3090'] = thirtyNinety;
+    const response = await guild.members
+      .fetch()
+      .then((response) => {
+        return response;
+      })
+      .catch(console.error);
 
-    return obj;
+    response.map((member) => {
+      console.log('member', member);
+      if (member._roles.includes(THIRTY_SEVENTY_ROLE))
+        thirtySeventy.push(member.user.id);
+      if (member._roles.includes(THIRTY_EIGHTY_ROLE))
+        thirtyEighty.push(member.user.id);
+      if (member._roles.includes(THIRTY_NINETY_ROLE))
+        thirtyNinety.push(member.user.id);
+    });
+
+    memberIds['3070'] = thirtySeventy;
+    memberIds['3080'] = thirtyEighty;
+    memberIds['3090'] = thirtyNinety;
+
+    return memberIds;
   }
   return null;
 };
