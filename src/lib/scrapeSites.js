@@ -102,7 +102,6 @@ const getSubscribedMembers = async (guild) => {
       .catch(console.error);
 
     response.map((member) => {
-      console.log('member', member);
       if (member._roles.includes(THIRTY_SEVENTY_ROLE))
         thirtySeventy.push(member.user.id);
       if (member._roles.includes(THIRTY_EIGHTY_ROLE))
